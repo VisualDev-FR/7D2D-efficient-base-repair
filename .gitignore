@@ -6,3 +6,4 @@ build
 *.dll
 *.pdb
 *.zip
+*.pyc

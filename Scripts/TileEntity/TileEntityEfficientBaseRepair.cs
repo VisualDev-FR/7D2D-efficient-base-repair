@@ -723,8 +723,7 @@ public class TileEntityEfficientBaseRepair : TileEntitySecureLootContainer // TO
 	/// </returns>
 	private List<DistributionData> CalcReloadDistribution()
 	{
-		var distribDatas = new List<DistributionData>();
-		var distribCountByItem = new Dictionary<string, int>();
+		var distribDataGroups = new Dictionary<ItemClass, DistributionDataGroup>();
 		var availableItems = ItemsToDict();
 
 		foreach (var blockPos in blocksToReload)
@@ -735,38 +734,26 @@ public class TileEntityEfficientBaseRepair : TileEntitySecureLootContainer // TO
 			if (!availableItems.ContainsKey(tileEntity.AmmoItem.Name))
 				continue;
 
-			var itemName = tileEntity.AmmoItem.Name;
+			var itemClass = tileEntity.AmmoItem;
 			var itemStackSize = tileEntity.ammoItem.Stacknumber.Value;
 			var requiredAmmos = tileEntity.ItemSlots.Sum(stack => EBRUtils.GetMissingItemCount(stack, itemStackSize));
 
 			if (requiredAmmos <= 0)
 				continue;
 
-			if (!distribCountByItem.ContainsKey(itemName))
-				distribCountByItem[itemName] = 0;
+			if (!distribDataGroups.ContainsKey(itemClass))
+				distribDataGroups[itemClass] = new DistributionDataGroup(tileEntity.AmmoItem, availableItems[itemClass.Name]);
 
-			distribCountByItem[itemName] += 1;
-
-			distribDatas.Add(new DistributionData()
-			{
-				tileEntity = tileEntity,
-				itemClass = tileEntity.ammoItem,
-				itemCount = requiredAmmos,
-			});
+			distribDataGroups[itemClass].AddDatas(tileEntity, requiredAmmos);
 		}
 
-		foreach (var data in distribDatas)
-		{
-			// Intentionally not checking key here: if the item is missing, it indicates a critical bug.
-			var itemName = data.itemClass.Name;
-			var availableItemCount = availableItems[itemName];
+		var distributionDatas = distribDataGroups.Values
+			.SelectMany(group => group.CalcDistributionDatas())
+			.ToList();
 
-			data.itemCount = Utils.FastMin(data.itemCount, availableItemCount / distribCountByItem[itemName]);
-		}
+		distributionDatas.RemoveAll(group => group.itemCount <= 0);
 
-		distribDatas.RemoveAll(data => data.itemCount <= 0);
-
-		return distribDatas;
+		return distributionDatas;
 	}
 
 	/// <summary>
