@@ -218,7 +218,25 @@ public class TileEntityEfficientBaseRepair : TileEntitySecureLootContainer // TO
 			missing_materials.Add(item.ItemName, required_item_count);
 		}
 
+		DebugRepairMaterials(block);
+
 		return missing_materials.Count > 0 ? missing_materials : null;
+	}
+
+	private void DebugRepairMaterials(BlockValue block)
+	{
+		float damage_perc = (float)block.damage / block.Block.MaxDamage;
+
+		var array = block.Block.RepairItems.Select(item =>
+		{
+			var required = (int)Mathf.Ceil(item.Count * damage_perc);
+
+			return $"{item.ItemName} {required}/{item.Count}";
+		});
+
+		var strMaterials = string.Join(", ", array);
+
+		logger.Debug($"{block.Block.blockName}: ({block.damage} / {block.Block.MaxDamage} = {damage_perc:F3}) {strMaterials}");
 	}
 
 	private int TakeRepairMaterial(string item_name, int itemCount)
