@@ -626,28 +626,23 @@ public class TileEntityEfficientBaseRepair : TileEntitySecureLootContainer // TO
 			if (!(world.GetTileEntity(pos) is TileEntityPoweredRangedTrap tileEntity))
 				continue;
 
-			ItemClass ammoType = RangedTrapHelper.GetFirstAllowedAmmo(tileEntity);
-
-			if (ammoType == null)
+			foreach (var ammoType in RangedTrapHelper.GetAllowedAmmos(tileEntity))
 			{
-				logger.Warning($"No ammos type found for block '{tileEntity.blockValue.Block.blockName}'");
-				continue;
-			}
+				var itemName = ammoType.Name;
+				var itemStackSize = ammoType.Stacknumber.Value;
 
-			var itemName = ammoType.Name;
-			var itemStackSize = ammoType.Stacknumber.Value;
+				foreach (var itemStack in tileEntity.ItemSlots)
+				{
+					var requiredAmmosCount = EBRUtils.GetMissingItemCount(itemStack, itemStackSize);
 
-			foreach (var itemStack in tileEntity.ItemSlots)
-			{
-				var requiredAmmos = EBRUtils.GetMissingItemCount(itemStack, itemStackSize);
+					if (requiredAmmosCount <= 0)
+						continue;
 
-				if (requiredAmmos <= 0)
-					continue;
+					if (!requiredMaterials.ContainsKey(itemName))
+						requiredMaterials[itemName] = 0;
 
-				if (!requiredMaterials.ContainsKey(itemName))
-					requiredMaterials[itemName] = 0;
-
-				requiredMaterials[itemName] += requiredAmmos;
+					requiredMaterials[itemName] += requiredAmmosCount;
+				}
 			}
 		}
 	}

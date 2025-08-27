@@ -1,4 +1,7 @@
 <configs>
+
+    <set xpath="//block[@name='autoTurret']/property[@name='AmmoItem']/@value">ammo9mmBulletBall,ammo9mmBulletHP,ammo9mmBulletAP</set>
+
     <append xpath="/blocks">
         <block name="EfficientBaseRepair">
 
