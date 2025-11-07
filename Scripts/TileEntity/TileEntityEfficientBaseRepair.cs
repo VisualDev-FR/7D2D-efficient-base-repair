@@ -38,6 +38,8 @@ public class TileEntityEfficientBaseRepair : TileEntitySecureLootContainer // TO
 
 	private bool forceRefreshMaterials;
 
+	public bool UpgradeEnabled => Config.upgradeRate >= 0;
+
 	private string RepairSound(BlockValue block) => string.Format("ImpactSurface/metalhit{0}", block.Block.blockMaterial.SurfaceCategory);
 
 	private static World world => GameManager.Instance.World;

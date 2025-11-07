@@ -5,7 +5,7 @@
     <property name="needsMaterialsForUpgrade" value="true" />   <!-- Set this param to false to upgrade even if you miss the upgrade materials -->
     <property name="refreshRate" value="0" />                   <!-- The number of game ticks between two auto refresh (set to 0 to disable auto refresh) -->
     <property name="repairRate" value="100" />                  <!-- The amount of damage which can be repaired for one game tick (set to 0 for instant repairs) -->
-    <property name="upgradeRate" value="1" />                   <!-- The number of blocks which can be upgraded during one game tick (set to 0 to for instant upgrades) -->
+    <property name="upgradeRate" value="1" />                   <!-- The number of blocks which can be upgraded during one game tick (set to 0 to for instant upgrades, and -1 to disable upgrade feature) -->
     <property name="playRepairSound" value="true" />            <!-- Set to false to disable the hammer sound on the current block which is being repaired -->
     <property name="activeDuringBloodMoon" value="false" />     <!-- Set to true to enable the auto repair during the blood moon-->
     <property name="autoTurnOff" value="true" />                <!-- Auto turn off if no more blocks can be repaired -->

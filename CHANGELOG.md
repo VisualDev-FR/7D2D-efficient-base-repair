@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-## [2.0.3] - 2025-11-08
+## [2.1.0] - 2025-11-08
 
 ### Fixed
 - Fixed OutOfBoundsException when there is more required materials than anticipated in xui
@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Added
 - Added new testing block 'ebrTestManyRepairItems'
+- Added possibility to disable upgrade feature
 
 ## [2.0.2] - 2025-09-10
 
@@ -157,6 +158,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 
 [unreleased]: https://github.com/VisualDev-FR/7D2D-efficient-base-repair/compare/master...unreleased
+[2.1.0]: https://github.com/VisualDev-FR/7D2D-efficient-base-repair/compare/2.0.2...2.1.0
 [2.0.2]: https://github.com/VisualDev-FR/7D2D-efficient-base-repair/compare/2.0.1...2.0.2
 [2.0.1]: https://github.com/VisualDev-FR/7D2D-efficient-base-repair/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/VisualDev-FR/7D2D-efficient-base-repair/compare/1.1.0...2.0.0

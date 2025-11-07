@@ -41,6 +41,7 @@ public class XUiC_EfficientBaseRepair : XUiController
 	{
 		TileEntity = _te;
 		lootWindow.SetTileEntityChest(_lootContainerName, _te);
+		statsWindow.SetUpgradeEnabled(TileEntity.UpgradeEnabled);
 	}
 
 	protected void OpenContainer()
