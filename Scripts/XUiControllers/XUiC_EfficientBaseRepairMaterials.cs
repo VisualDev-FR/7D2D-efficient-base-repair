@@ -67,7 +67,7 @@ public class XUiC_EfficientBaseRepairMaterials : XUiController
                 continue;
 
             // can happen if there more repair materials than the anticipated max amount of material sprites
-            if (index > materialSprites.Length)
+            if (index >= materialSprites.Length)
                 continue;
 
             XUiV_Sprite sprite = (XUiV_Sprite)materialSprites[index].ViewComponent;
