@@ -1,5 +1,6 @@
 <configs>
     <append xpath="/blocks">
+
         <block name="EfficientBaseRepair">
 
             <property name="Class" value="BlockEfficientBaseRepair, EfficientBaseRepair" />
@@ -27,5 +28,52 @@
             </property>
 
         </block>
+
+        <block name="ebrTestManyRepairItems">
+
+            <property name="Extends" value="cntGunSafe" />
+            <property name="CustomIcon" value="cntGunSafeOpenWhite" />
+            <property name="CustomIconTint" value="200, 0, 200" />
+            <property name="CreativeMode" value="Dev" />
+
+            <property class="RepairItems">
+                <property name="resourceCobblestones" value="10" />
+                <property name="resourceClayLump" value="10" />
+                <property name="resourceBulletCasing" value="10" />
+                <property name="resourceBulletTip" value="10" />
+                <property name="resourceBuckshot" value="10" />
+                <property name="resourcePaper" value="10" />
+                <property name="resourceArrowHeadIron" value="10" />
+                <property name="resourceArrowHeadSteelAP" value="10" />
+                <property name="resourceFeather" value="10" />
+                <property name="resourceWood" value="10" />
+                <property name="resourceCrushedSand" value="10" />
+                <property name="resourcePotassiumNitratePowder" value="10" />
+                <property name="resourceCoal" value="10" />
+                <property name="resourceScrapLead" value="10" />
+                <property name="resourceScrapBrass" value="10" />
+                <property name="resourceScrapIron" value="10" />
+                <property name="resourceForgedIron" value="10" />
+                <property name="resourceForgedSteel" value="10" />
+                <property name="resourceMetalPipe" value="10" />
+                <property name="resourceOilShale" value="10" />
+                <property name="resourceOil" value="10" />
+                <property name="resourceGlue" value="10" />
+                <property name="resourceDuctTape" value="10" />
+                <property name="resourceCloth" value="10" />
+                <property name="resourceLeather" value="10" />
+                <property name="resourceScrapPolymers" value="10" />
+                <property name="resourceGunPowder" value="10" />
+                <property name="resourceAcid" value="1" />
+                <property name="resourceAnimalFat" value="10" />
+                <property name="resourceHeadlight" value="10" />
+                <property name="resourceSpring" value="10" />
+                <property name="resourceElectricParts" value="10" />
+                <property name="resourceMechanicalParts" value="10" />
+                <property name="resourceLockPick" value="10" />
+            </property>
+
+        </block>
+
     </append>
 </configs>
