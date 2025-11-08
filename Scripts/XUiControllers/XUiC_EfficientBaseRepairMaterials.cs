@@ -1,35 +1,30 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class XUiC_EfficientBaseRepairMaterials : XUiController
 {
-    public string[] MaterialNames;
+    public TileEntityEfficientBaseRepair TileEntity { get; set; }
 
-    private int[] weights;
+    private XUiC_EBRMaterialEntry[] materialEntries;
 
-    public TileEntityEfficientBaseRepair tileEntity;
+    private XUiController materialsPanel;
 
-    private XUiController[] materialSprites;
-
-    private XUiController[] materialWeights;
-
-    private Color baseTextColor;
-
-    private Color validColor = Color.green;
-
-    private Color invalidColor = Color.red;
+    private XUiC_Paging pager;
 
     public override void Init()
     {
         base.Init();
-        materialSprites = GetChildrenById("material");
-        materialWeights = GetChildrenById("weight");
-        if (materialWeights[0] != null)
-        {
-            baseTextColor = ((XUiV_Label)materialWeights[0].ViewComponent).Color;
-        }
 
-        weights = null;
+        pager = GetChildByType<XUiC_Paging>();
+        pager.OnPageChanged += HandlePageChanged;
+
+        materialsPanel = GetChildById("materialsPanel");
+        materialsPanel.OnScroll += HandleOnScroll;
+
+        materialEntries = GetChildrenByType<XUiC_EBRMaterialEntry>();
     }
 
     public override void OnOpen()
@@ -47,15 +42,31 @@ public class XUiC_EfficientBaseRepairMaterials : XUiController
         }
     }
 
+    private IEnumerable<KeyValuePair<string, int>> GetPagedMaterials(int currentPage, int pageSize)
+    {
+        var entries = TileEntity.requiredMaterials.Select(e => e).ToList();
+        var startIndex = currentPage * pageSize;
+        var endIndex = Math.Min(entries.Count, (currentPage + 1) * pageSize);
+
+        for (int i = startIndex; i < endIndex; i++)
+        {
+            yield return entries[i];
+        }
+    }
+
     private void UpdateMaterials()
     {
-        if (tileEntity == null)
+        if (TileEntity == null)
             return;
 
-        int index = 0;
-        Dictionary<string, int> itemsDict = tileEntity.ItemsToDict();
+        var lastPageNumber = Mathf.CeilToInt(TileEntity.requiredMaterials.Count / materialEntries.Length);
+        var currentPageNumber = Math.Min(lastPageNumber, pager.CurrentPageNumber);
 
-        foreach (KeyValuePair<string, int> entry in tileEntity.requiredMaterials)
+        var itemsDict = TileEntity.ItemsToDict();
+        var requiredMaterials = GetPagedMaterials(currentPageNumber, materialEntries.Length);
+        var index = 0;
+
+        foreach (var entry in requiredMaterials)
         {
             string text = Localization.Get(entry.Key);
             string iconName = ItemClass.GetItem(entry.Key).ItemClass.GetIconName();
@@ -66,86 +77,37 @@ public class XUiC_EfficientBaseRepairMaterials : XUiController
             if (requiredMaterialsCount <= 0)
                 continue;
 
-            // can happen if there more repair materials than the anticipated max amount of material sprites
-            if (index >= materialSprites.Length)
-                continue;
+            if (index >= materialEntries.Length)
+                break;
 
-            XUiV_Sprite sprite = (XUiV_Sprite)materialSprites[index].ViewComponent;
-            sprite.ParseAttribute("sprite", iconName, materialSprites[index]);
-
-            XUiV_Label label = (XUiV_Label)materialWeights[index].ViewComponent;
-            label.Text = $"{availableMaterialsCount} / {requiredMaterialsCount}";
-            label.Color = availableMaterialsCount >= requiredMaterialsCount ? validColor : invalidColor;
+            materialEntries[index].SetIcon(iconName);
+            materialEntries[index].SetQuantity(availableMaterialsCount, requiredMaterialsCount);
 
             index++;
         }
 
-        for (int i = index; i < materialWeights.Length; i++)
+        for (int i = index; i < materialEntries.Length; i++)
         {
-            ((XUiV_Label)materialWeights[i].ViewComponent).Text = "";
-            ((XUiV_Sprite)materialSprites[i].ViewComponent).ParseAttribute("sprite", "", materialSprites[i]);
+            materialEntries[i].SetEmpty();
         }
+
+        pager.LastPageNumber = lastPageNumber;
     }
 
-    private void ResetWeightColors()
+    public void HandlePageChanged()
     {
-        for (int i = 0; i < weights.Length; i++)
+        Log.Out($"Page: {pager.currentPageNumber}");
+    }
+
+    public void HandleOnScroll(XUiController _sender, float _delta)
+    {
+        if (_delta > 0f)
         {
-            ((XUiV_Label)materialWeights[i].ViewComponent).Color = baseTextColor;
+            pager?.PageDown();
         }
-    }
-
-    public void SetMaterialWeights(ItemStack[] stackList)
-    {
-        for (int i = 3; i < stackList.Length; i++)
+        else
         {
-            if (weights != null && stackList[i] != null)
-            {
-                weights[i - 3] = stackList[i].count;
-            }
+            pager?.PageUp();
         }
-        // onForgeValuesChanged();
-    }
-
-    public override bool ParseAttribute(string name, string value, XUiController _parent)
-    {
-        bool flag = base.ParseAttribute(name, value, _parent);
-        if (!flag)
-        {
-            switch (name)
-            {
-                case "materials":
-                    // if (value.Contains(","))
-                    // {
-                    // 	MaterialNames = value.Replace(" ", "").Split(',', StringSplitOptions.None);
-                    // 	weights = new int[MaterialNames.Length];
-                    // }
-                    // else
-                    // {
-                    // 	MaterialNames = new string[1] { value };
-                    // }
-                    MaterialNames = new string[1] { value };
-                    return true;
-                case "valid_materials_color":
-                    validColor = StringParsers.ParseColor32(value);
-                    return true;
-                case "invalid_materials_color":
-                    invalidColor = StringParsers.ParseColor32(value);
-                    return true;
-                default:
-                    return false;
-            }
-        }
-        return flag;
-    }
-
-    private float calculateWeightOunces(int materialIndex)
-    {
-        return weights[materialIndex];
-    }
-
-    private float calculateWeightPounds(int materialIndex)
-    {
-        return calculateWeightOunces(materialIndex) / 16f;
     }
 }

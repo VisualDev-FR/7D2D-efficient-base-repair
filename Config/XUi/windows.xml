@@ -1,6 +1,6 @@
 <configs>
     <append xpath="/windows">
-        <!-- modified windowPowerSourceStats -->
+
         <window name="WindowEfficientBaseRepairStats" width="228" height="345" panel="Left" controller="EfficientBaseRepairStats, EfficientBaseRepair">
             <panel name="header" height="43" depth="1" backgroundspritename="ui_game_panel_header">
                 <sprite depth="2" name="windowIcon" style="icon32px" pos="5,-5" sprite="ui_game_symbol_block_damage" />
@@ -48,24 +48,19 @@
                 </rect>
             </rect>
         </window>
-        <!-- modified windowForgeInput -->
-        <window name="windowEfficientBaseRepairMaterials" width="228" height="1000" panel="Right" controller="EfficientBaseRepairMaterials, EfficientBaseRepair" materials_accepted="iron,brass,lead,glass,stone,clay" valid_materials_color="[green]" invalid_materials_color="[red]" cursor_area="true">
+
+        <window name="windowEfficientBaseRepairMaterials" width="260" height="1000" panel="Right" controller="EfficientBaseRepairMaterials, EfficientBaseRepair" cursor_area="true">
+
             <panel style="header.panel">
                 <sprite style="header.icon" sprite="ui_game_symbol_forge" />
-                <label style="header.name" text="INPUT" text_key="xuiMaterials" />
+                <label style="header.name" text_key="xuiMaterials" />
+                <pager name="pager" pos="155,-6" contents_parent="content" />
             </panel>
-            <sprite depth="2" name="backgroundMain" sprite="menu_empty3px" pos="0,-46" height="740" color="[black]" type="sliced" fillcenter="false" on_press="true" />
-            <rect name="content2" depth="0" pos="0, -49" width="228" height="735">
-                <sprite depth="1" color="[mediumGrey]" type="sliced" on_press="true" />
-                <grid rows="15" cols="1" pos="3,-3" cell_width="228" cell_height="50" repeat_content="true">
-                    <!-- <forge_material name="0"/> -->
-                    <table depth="1" columns="2" padding="5, 5">
-                        <sprite name="material" atlas="ItemIconAtlas" depth="2" height="40" width="40" pos="3, 3" pivot="center" fill="[iconColor]" />
-                        <label name="weight" font_size="24" padding="10, 10" depth="2" height="40" width="114" color="[beige]" pivot="center" pos="20, 20" />
-                        <!-- justify="center" -->
-                    </table>
-                </grid>
-            </rect>
+
+            <grid name="materialsPanel" on_scroll="true" rows="16" cols="1" pos="0, -49" width="260" cell_width="260" cell_height="46" repeat_content="true" arrangement="vertical">
+                <ebr_material_entry name="0" />
+            </grid>
+
         </window>
     </append>
 </configs>

@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## Added
 - Added new testing block 'ebrTestManyRepairItems'
 - Added possibility to disable upgrade feature
+- Materials panel is now scrollable to display the exhaustive list of required materials
 
 ## [2.0.2] - 2025-09-10
 
