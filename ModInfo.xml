@@ -4,6 +4,6 @@
 	<DisplayName value="EfficientBaseRepair" />
 	<Description value="A modlet to automate base repairs, upgrades, and automatically refuel or reload blocks like generators, traps, and more." />
 	<Author value="VisualDev-FR" />
-	<Version value="2.0.2" />
+	<Version value="2.1.0" />
 	<Website value="https://github.com/VisualDev-FR/efficient-base-repair-" />
 </xml>

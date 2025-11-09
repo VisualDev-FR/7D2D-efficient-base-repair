@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-## [2.1.0] - 2025-11-08
+## [2.1.0] - 2025-11-09
 
 ### Fixed
 - Fixed OutOfBoundsException when there is more required materials than anticipated in xui
