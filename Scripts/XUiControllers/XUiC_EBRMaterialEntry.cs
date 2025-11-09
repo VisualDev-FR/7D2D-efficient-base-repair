@@ -2,40 +2,40 @@ using UnityEngine;
 
 public class XUiC_EBRMaterialEntry : XUiController
 {
-    private XUiV_Label label;
+    private static Color validColor = Color.green;
 
-    private XUiV_Sprite sprite;
+    private static Color invalidColor = Color.red;
 
-    private Color validColor = Color.green;
+    private XUiV_Label Label { get; set; }
 
-    private Color invalidColor = Color.red;
+    private XUiV_Sprite Sprite { get; set; }
 
     public override void Init()
     {
         base.Init();
 
-        label = GetChildById("label").viewComponent as XUiV_Label;
-        sprite = GetChildById("icon").viewComponent as XUiV_Sprite;
+        Label = GetChildById("label").viewComponent as XUiV_Label;
+        Sprite = GetChildById("icon").viewComponent as XUiV_Sprite;
 
-        EBRUtils.Assert(label != null);
-        EBRUtils.Assert(sprite != null);
+        EBRUtils.Assert(Label != null);
+        EBRUtils.Assert(Sprite != null);
     }
 
     public void SetIcon(string iconName)
     {
-        sprite.ParseAttribute("sprite", iconName, this);
+        Sprite.ParseAttribute("sprite", iconName, this);
     }
 
     public void SetQuantity(int available, int required)
     {
-        label.Text = $"{available} / {required}";
-        label.Color = available >= required ? validColor : invalidColor;
+        Label.Text = $"{available} / {required}";
+        Label.Color = available >= required ? validColor : invalidColor;
     }
 
     public void SetEmpty()
     {
-        label.Text = "";
-        sprite.ParseAttribute("sprite", "", this);
+        Label.Text = "";
+        Sprite.ParseAttribute("sprite", "", this);
     }
 
     public override bool ParseAttribute(string name, string value, XUiController _parent)

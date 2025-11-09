@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,23 +7,23 @@ public class XUiC_EfficientBaseRepairMaterials : XUiController
 {
     public TileEntityEfficientBaseRepair TileEntity { get; set; }
 
-    private XUiC_EBRMaterialEntry[] materialEntries;
+    private XUiC_EBRMaterialEntry[] MaterialEntries { get; set; }
 
-    private XUiController materialsPanel;
+    private XUiController MaterialsPanel { get; set; }
 
-    private XUiC_Paging pager;
+    private XUiC_Paging Pager { get; set; }
 
     public override void Init()
     {
         base.Init();
 
-        pager = GetChildByType<XUiC_Paging>();
-        pager.OnPageChanged += HandlePageChanged;
+        Pager = GetChildByType<XUiC_Paging>();
+        Pager.OnPageChanged += HandlePageChanged;
 
-        materialsPanel = GetChildById("materialsPanel");
-        materialsPanel.OnScroll += HandleOnScroll;
+        MaterialsPanel = GetChildById("materialsPanel");
+        MaterialsPanel.OnScroll += HandleOnScroll;
 
-        materialEntries = GetChildrenByType<XUiC_EBRMaterialEntry>();
+        MaterialEntries = GetChildrenByType<XUiC_EBRMaterialEntry>();
     }
 
     public override void OnOpen()
@@ -59,11 +58,11 @@ public class XUiC_EfficientBaseRepairMaterials : XUiController
         if (TileEntity == null)
             return;
 
-        var lastPageNumber = Mathf.CeilToInt(TileEntity.requiredMaterials.Count / materialEntries.Length);
-        var currentPageNumber = Math.Min(lastPageNumber, pager.CurrentPageNumber);
+        var lastPageNumber = Mathf.CeilToInt(TileEntity.requiredMaterials.Count / MaterialEntries.Length);
+        var currentPageNumber = Math.Min(lastPageNumber, Pager.CurrentPageNumber);
 
         var itemsDict = TileEntity.ItemsToDict();
-        var requiredMaterials = GetPagedMaterials(currentPageNumber, materialEntries.Length);
+        var requiredMaterials = GetPagedMaterials(currentPageNumber, MaterialEntries.Length);
         var index = 0;
 
         foreach (var entry in requiredMaterials)
@@ -77,37 +76,38 @@ public class XUiC_EfficientBaseRepairMaterials : XUiController
             if (requiredMaterialsCount <= 0)
                 continue;
 
-            if (index >= materialEntries.Length)
+            if (index >= MaterialEntries.Length)
                 break;
 
-            materialEntries[index].SetIcon(iconName);
-            materialEntries[index].SetQuantity(availableMaterialsCount, requiredMaterialsCount);
+            MaterialEntries[index].SetIcon(iconName);
+            MaterialEntries[index].SetQuantity(availableMaterialsCount, requiredMaterialsCount);
 
             index++;
         }
 
-        for (int i = index; i < materialEntries.Length; i++)
+        for (int i = index; i < MaterialEntries.Length; i++)
         {
-            materialEntries[i].SetEmpty();
+            MaterialEntries[i].SetEmpty();
         }
 
-        pager.LastPageNumber = lastPageNumber;
+        Pager.LastPageNumber = lastPageNumber;
     }
 
     public void HandlePageChanged()
     {
-        Log.Out($"Page: {pager.currentPageNumber}");
+        // Do nothing because the materials are updated at each frame
+        // (which might need to be changed to increase performances, but requires complex state management)
     }
 
     public void HandleOnScroll(XUiController _sender, float _delta)
     {
         if (_delta > 0f)
         {
-            pager?.PageDown();
+            Pager?.PageDown();
         }
         else
         {
-            pager?.PageUp();
+            Pager?.PageUp();
         }
     }
 }
