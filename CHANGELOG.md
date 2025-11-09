@@ -6,13 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-## 2.0.2 - 2025-09-10
+## [2.1.0] - 2025-11-09
+
+### Fixed
+- Fixed OutOfBoundsException when there is more required materials than anticipated in xui
+- Fixed compatibility issues for V2.4b7
+
+## Changed
+- Changed testing prefab to test configuration with lot of repair materials
+
+## Added
+- Added new testing block 'ebrTestManyRepairItems'
+- Added possibility to disable upgrade feature
+- Materials panel is now scrollable to display the exhaustive list of required materials
+
+## [2.0.2] - 2025-09-10
 
 ### Fixed
 - Fixed OutOfBoundsException when there is more required materials than anticipated in xui
 - Fixed compatibility issues for V2.3b9
 
-## 2.0.1 - 2025-08-27
+## [2.0.1] - 2025-08-27
 
 ### Fixed
 - Fixed NullReferenceException happening when a ranged trap has a null AmmoItem. EBR Will takes the first ammo type if several are specified in blocks.xml
@@ -145,6 +159,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 
 [unreleased]: https://github.com/VisualDev-FR/7D2D-efficient-base-repair/compare/master...unreleased
+[2.1.0]: https://github.com/VisualDev-FR/7D2D-efficient-base-repair/compare/2.0.2...2.1.0
 [2.0.2]: https://github.com/VisualDev-FR/7D2D-efficient-base-repair/compare/2.0.1...2.0.2
 [2.0.1]: https://github.com/VisualDev-FR/7D2D-efficient-base-repair/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/VisualDev-FR/7D2D-efficient-base-repair/compare/1.1.0...2.0.0

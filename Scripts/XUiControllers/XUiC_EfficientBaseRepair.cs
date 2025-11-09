@@ -41,6 +41,7 @@ public class XUiC_EfficientBaseRepair : XUiController
 	{
 		TileEntity = _te;
 		lootWindow.SetTileEntityChest(_lootContainerName, _te);
+		statsWindow.SetUpgradeEnabled(TileEntity.UpgradeEnabled);
 	}
 
 	protected void OpenContainer()
@@ -157,7 +158,7 @@ public class XUiC_EfficientBaseRepair : XUiController
 		statsWindow.SetWidth(lootWindow.ViewComponent.Size.x);
 		statsWindow.OnOpen();
 
-		MaterialsWindow.tileEntity = TileEntity;
+		MaterialsWindow.TileEntity = TileEntity;
 		MaterialsWindow.OnOpen();
 
 		Manager.BroadcastPlayByLocalPlayer(position, "UseActions/chest_tier4_open");

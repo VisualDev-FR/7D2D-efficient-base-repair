@@ -37,21 +37,9 @@ public class XUiC_EfficientBaseRepairStats : XUiController
 
 	private string UpgradeOffText => "Upgrade Off";
 
-	private TileEntityEfficientBaseRepair tileEntity;
-
 	private bool lastOn;
 
-	public TileEntityEfficientBaseRepair TileEntity
-	{
-		get
-		{
-			return tileEntity;
-		}
-		set
-		{
-			tileEntity = value;
-		}
-	}
+	public TileEntityEfficientBaseRepair TileEntity { get; set; }
 
 	public override void Init()
 	{
@@ -76,6 +64,23 @@ public class XUiC_EfficientBaseRepairStats : XUiController
 		sprUpgrade = (XUiV_Sprite)GetChildById("sprUpgrade").ViewComponent;
 
 		((XUiV_Label)GetChildById("lblRefresh").ViewComponent).Text = Localization.Get("xuiServerBrowserRefreshList");
+	}
+
+	public void SetUpgradeEnabled(bool enabled)
+	{
+		if (enabled != btnUpgrade.ViewComponent.forceHide)
+			return;
+
+		btnUpgrade.ViewComponent.forceHide = !enabled;
+
+		if (enabled)
+		{
+			btnRefresh.viewComponent.Position -= new Vector2i(0, btnUpgrade.viewComponent.size.y);
+		}
+		else
+		{
+			btnRefresh.viewComponent.Position += new Vector2i(0, btnUpgrade.viewComponent.size.y);
+		}
 	}
 
 	public void SetWidth(int width)
@@ -204,18 +209,18 @@ public class XUiC_EfficientBaseRepairStats : XUiController
 
 	private void BtnRefresh_OnPress(XUiController _sender, int _mouseButton)
 	{
-		tileEntity.ForceRefresh();
+		TileEntity.ForceRefresh();
 		Manager.PlayInsidePlayerHead("UseActions/chest_tier4_open");
 	}
 
 	private void BtnOn_OnPress(XUiController _sender, int _mouseButton)
 	{
-		tileEntity.Switch();
+		TileEntity.Switch();
 	}
 
 	private void BtnUpgrade_OnPress(XUiController _sender, int _mouseButton)
 	{
-		tileEntity.SwitchUpgrade();
+		TileEntity.SwitchUpgrade();
 	}
 
 	private void RefreshUpgradeOn(bool upgradeOn)
@@ -265,25 +270,25 @@ public class XUiC_EfficientBaseRepairStats : XUiController
 
 	private void RefreshStats()
 	{
-		GetLabel("lblBlocksToRepair").Text = $"{tileEntity.DamagedBlockCount:N0} damaged blocks found.";
-		GetLabel("lblBlocksToUpgrade").Text = $"{tileEntity.UpgradableBlockCount:N0} upgradable blocks found.";
-		GetLabel("lblTotalDamages").Text = $"{tileEntity.TotalDamagesCount:N0} damages points to repair.";
-		GetLabel("lblVisitedBlocks").Text = $"{tileEntity.VisitedBlocksCount:N0} blocks visited.";
-		GetLabel("lblIterations").Text = $"{tileEntity.BfsIterationsCount} iterations done.";
-		GetLabel("lblTimer").Text = $"Repair time {tileEntity.CalcRepairTime()}";
+		GetLabel("lblBlocksToRepair").Text = $"{TileEntity.DamagedBlockCount:N0} damaged blocks found.";
+		GetLabel("lblBlocksToUpgrade").Text = $"{TileEntity.UpgradableBlockCount:N0} upgradable blocks found.";
+		GetLabel("lblTotalDamages").Text = $"{TileEntity.TotalDamagesCount:N0} damages points to repair.";
+		GetLabel("lblVisitedBlocks").Text = $"{TileEntity.VisitedBlocksCount:N0} blocks visited.";
+		GetLabel("lblIterations").Text = $"{TileEntity.BfsIterationsCount} iterations done.";
+		GetLabel("lblTimer").Text = $"Repair time {TileEntity.CalcRepairTime()}";
 	}
 
 	public override void Update(float _dt)
 	{
-		if ((GameManager.Instance != null || GameManager.Instance.World != null) && tileEntity != null)
+		if ((GameManager.Instance != null || GameManager.Instance.World != null) && TileEntity != null)
 		{
 			base.Update(_dt);
-			if (lastOn != tileEntity.IsOn)
+			if (lastOn != TileEntity.IsOn)
 			{
-				lastOn = tileEntity.IsOn;
-				RefreshIsOn(tileEntity.IsOn);
+				lastOn = TileEntity.IsOn;
+				RefreshIsOn(TileEntity.IsOn);
 			}
-			RefreshUpgradeOn(tileEntity.UpgradeOn);
+			RefreshUpgradeOn(TileEntity.UpgradeOn);
 			RefreshStats();
 			RefreshBindings();
 		}
@@ -292,21 +297,21 @@ public class XUiC_EfficientBaseRepairStats : XUiController
 	public override void OnOpen()
 	{
 		base.OnOpen();
-		tileEntity.SetUserAccessing(_bUserAccessing: true);
-		RefreshIsOn(tileEntity.IsOn);
-		RefreshUpgradeOn(tileEntity.UpgradeOn);
+		TileEntity.SetUserAccessing(_bUserAccessing: true);
+		RefreshIsOn(TileEntity.IsOn);
+		RefreshUpgradeOn(TileEntity.UpgradeOn);
 		RefreshBindings();
 	}
 
 	public override void OnClose()
 	{
 		GameManager instance = GameManager.Instance;
-		Vector3i blockPos = tileEntity.ToWorldPos();
+		Vector3i blockPos = TileEntity.ToWorldPos();
 		if (!XUiC_CameraWindow.hackyIsOpeningMaximizedWindow)
 		{
-			tileEntity.SetUserAccessing(_bUserAccessing: false);
-			instance.TEUnlockServer(tileEntity.GetClrIdx(), blockPos, tileEntity.entityId, false);
-			tileEntity.SetModified();
+			TileEntity.SetUserAccessing(_bUserAccessing: false);
+			instance.TEUnlockServer(TileEntity.GetClrIdx(), blockPos, TileEntity.entityId, false);
+			TileEntity.SetModified();
 		}
 		base.OnClose();
 	}

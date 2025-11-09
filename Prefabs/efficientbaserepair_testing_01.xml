@@ -16,11 +16,11 @@
   <property name="Tags" value="test, testonly" />
   <property class="Stats">
     <property name="LightsVolume" value="0" />
-    <property name="TotalVertices" value="185070" />
-    <property name="TotalTriangles" value="65295" />
+    <property name="TotalVertices" value="188560" />
+    <property name="TotalTriangles" value="66282" />
     <property class="BlockEntities">
-      <property name="Vertices" value="180470" />
-      <property name="Triangles" value="60535" />
+      <property name="Vertices" value="183960" />
+      <property name="Triangles" value="61522" />
     </property>
     <property class="ChunkMeshes0">
       <property name="Vertices" value="2040" />
