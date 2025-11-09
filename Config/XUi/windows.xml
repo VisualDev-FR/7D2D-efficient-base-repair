@@ -57,7 +57,7 @@
                 <pager name="pager" pos="155,-6" contents_parent="content" />
             </panel>
 
-            <grid name="materialsPanel" on_scroll="true" rows="16" cols="1" pos="0, -49" width="260" cell_width="260" cell_height="46" repeat_content="true" arrangement="vertical">
+            <grid name="materialsPanel" rows="16" cols="1" pos="0, -49" width="260" cell_width="260" cell_height="46" repeat_content="true" arrangement="vertical">
                 <ebr_material_entry name="0" />
             </grid>
 

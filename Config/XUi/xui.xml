@@ -6,7 +6,7 @@
             open_backpack_on_open="true"
             close_compass_on_open="true"
         >
-            <window name="craftingInfoPanel" />
+            <window name="itemInfoPanel" />
             <window name="windowLooting" />
             <window name="windowNonPagingHeader" />
             <window name="WindowEfficientBaseRepairStats" />
