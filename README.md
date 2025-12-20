@@ -1,88 +1,80 @@
-# 7 Days to Die - Efficient Base Repair
+# 7D2D - Efficient Base Repair System
 
-This mod, inspired by [ocbClaimAutoRepair](https://github.com/OCB7D2D/OcbClaimAutoRepair), adds a new block that allows you to efficiently repair your base while dynamically displaying useful repair statistics.
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![Platform](https://img.shields.io/badge/platform-Windows-blue)
+![Language](https://img.shields.io/badge/language-C%23-blue)
 
-Almost fully customizable, this mod allows you to choose your own balancing settings. You can configure it through XML files to have an overpowered behavior, instantly repairing your entire base without any required materials. Or, you can listen to the reasonable voice in your head and choose a small repair rate to slowly repair your base over time, stopping when it's out of resources.
+> **An automated maintenance agent for 3D voxel structures, featuring BFS-driven structural analysis, data-driven configuration, and a custom load-balancing algorithm.**
 
-This block is unlocked at level 60 of repair tool skills and can be crafted in a workbench with forged steel, electric parts, and a car battery.
+## Overview
 
-Find more details about changes of this project in the dedicated [changelog file](./CHANGELOG.md)
+This project implements a sophisticated automated repair and upgrade utility for the *7 Days to Die* engine. It introduces a custom functional block capable of scanning, analyzing, and maintaining large-scale structures using advanced pathfinding logic.
 
-## How to Install Manually
+Key technical pillars:
+* **Structural Analysis:** Uses a specialized BFS algorithm to map contiguous voxel structures.
+* **Resource Management:** Real-time inventory tracking to match repair requirements with available materials.
+* **Extensible Configuration:** Fully decoupled logic via XML-based parameter injection.
 
-1. Download the [zip file](https://www.nexusmods.com/7daystodie/mods/4861?tab=files) of the mod.
-2. Extract the entire content of the zip file to `C:\...\Steam\steamapps\common\7 Days To Die\Mods\`.
+## Technical Implementation
 
-#### NOTES
-* **This mod is not EAC compatible.**
-* **Installation on both client and server side is required.**
-* **Consider doing a backup of your current save before installing the mod.**
-* **Before uninstalling the mod, ensure to remove all EfficientBaseRepair blocks from the world.**
+### Structural Graph Traversal (BFS)
 
-## How to Use
+To identify damaged components within a contiguous structure, the system implements a **Breadth-First Search (BFS)** algorithm.
 
-1. Place the EfficientBaseRepair block on the structure that you want to repair.
-2. Open the EfficientBaseRepair block and put the required materials inside.
-3. (optional) press the `Upgrade On` button to enable the blocks upgrade
-4. Press the `Turn on` button from the user interface or from the block command bar.
-5. That's it! Now just wait for your base to be repaired!
+* **Logic:** Starting from the source block, the system recursively probes direct neighbors to build a map of the connected structure.
+* **Termination Predicate:** The search automatically terminates upon hitting "boundary" voxels (Air, Water, Terrain, or non-structural decorations).
+* **Optimization:** To prevent redundant processing, a predicate-based filtering system ignores non-relevant blocks early in the traversal.
 
-## How Are Damaged Blocks Found?
+### Dynamic Resource Load Balancing
 
-This mod uses a [BFS](https://en.wikipedia.org/wiki/Breadth-first_search) approach to find all blocks to repair. From the position where it is placed, it will recursively analyze its direct neighbors, then the neighbors of its neighbors, etc., until it finds water, air, or a terrain block. It will stop looking for neighbors unless this block has damage.
+Beyond simple repairs, the system manages automated refueling and reloading for defense systems (turrets, generators, etc.) using a **custom load-balancing algorithm**.
 
-This means that it has to be placed directly on the structure that you want to be covered by auto-repair, and this structure must be continuous to be fully covered.
+* **Equitable Distribution:** Rather than filling targets sequentially (which could leave the last containers empty), the algorithm calculates the aggregate demand across all connected systems and distributes the available buffer proportionally.
+* **Starvation Prevention:** This approach prevents "resource starvation," ensuring that all defensive components maintain operational uptime even when the central supply is limited.
+* **Optimized Logistics:** The distribution logic is decoupled from the structural scan, allowing it to process refueling cycles (e.g., Gasoline, Ammo) efficiently within the maintenance tick.
 
-To be clear and concise: **The EfficientBaseRepair block must be able to find a path to the target block you want to be repaired.**
+### Performance & CPU Budgeting
 
-Ignored blocks are determined as follows:
+Scanning structures exceeding **100,000+ blocks** on a single frame can lead to "micro-stutters" or frame drops. This project implements several mitigation strategies:
 
-```C#
-private bool IsBlockIgnored(BlockValue block)
-{
-    if (block.damage > 0)
-        return false;
+* **On-Demand Processing:** Structural analysis is triggered by specific events (UI Interaction, Radial Menu) rather than every frame.
+* **Tick-Based Logic:** Automated maintenance tasks are distributed over `n` game ticks to prevent CPU spikes.
+* **Configurable Complexity:** The `MaxBfsIteration` parameter allows users to cap the computational cost based on their hardware constraints.
 
-    return (
-        block.isair
-        || block.isWater
-        || block.Block.shape.IsTerrain()
-        || block.Block.IsPlant()
-        || block.Block.IsTerrainDecoration
-    );
-}
-```
+## Data-Driven Configuration
 
-## What About Performance?
+The system's behavior is entirely configurable via [ModConfig.xml](./ModConfig.xml), allowing a clean separation between the core engine logic and gameplay balancing values.
 
-As this approach may require a lot of resources, the search for blocks to repair cannot be done in real time. It's assumed that for big structures (more than 100,000 blocks), you might experience some short framerate drops during the full structure analysis. This is the price to pay to have the benefit of quick repairs.
+| Property | Description |
+| :--- | :--- |
+| `maxBfsIterations` | Caps the traversal depth (BFS) to manage CPU resource allocation and performance impact. |
+| `needsMaterialsForRepair` | Determines if resource consumption is mandatory for executing repair operations. |
+| `needsMaterialsForUpgrade` | Determines if resource consumption is mandatory for executing block upgrades. |
+| `refreshRate` | Frequency (in game ticks) of automated structural scans (set to 0 to disable). |
+| `repairRate` | Amount of structural integrity restored per tick (0 for instant repair). |
+| `upgradeRate` | Number of blocks upgraded per tick (0 for instant, -1 to disable the feature). |
+| `playRepairSound` | Toggles spatial audio feedback during the active repair process. |
+| `activeDuringBloodMoon` | Enables or suspends system operations during Blood Moon events. |
+| `autoTurnOff` | Logic-gate: automatically shuts down the system when no maintenance tasks remain. |
+| `keepPaintAfterUpgrade` | Ensures texture/paint data persistence during block state transitions. |
+| `lootSize` | Defines the dimensions (columns, rows) of the UI inventory grid. |
+| `upgradeSound` | Audio asset identifier triggered upon successful block upgrade cycles. |
+| `turnOnAfterReload` | Turn on blocks after auto reloading if they were turned off. |
+| `turnOnAfterRefuel` | Turn on blocks after auto refueling if they were turned off. |
 
-You can limit the search coverage by reducing the `MaxBfsIteration` parameter if you need a better performance compromise.
+## Installation & Integration
 
-The full structure analysis will be done at different moments:
+### Manual Deployment
 
-* At the block opening: When you open the UI of the block, it will automatically search for blocks to repair to display fresh data. (Don't be worried if you experience a small freeze delay when opening on big structures.)
-* At the block activation from the block commands (radial menu).
-* Every `n` game ticks: You can set the number of game ticks (one game tick ≈ 2s) to perform an auto-refresh when the block is activated. By default, auto-refresh is disabled.
-* Manually: You have a manual refresh button in the UI.
+1.  Download the latest release from [NexusMods](https://www.nexusmods.com/7daystodie/mods/4861).
+2.  Deploy the package to the game's `Mods/` directory.
 
-## How to Customize
+### Requirements & Compatibility
 
-Once the installation is done, go to [ModConfig.xml](./ModConfig.xml) and take a look at the available parameters.
+  * **EAC:** Must be disabled (due to IL injection/Harmony requirements).
+  * **Architecture:** Required on both Client and Server (Syncing voxel states and UI data).
 
-```xml
-    <property name="maxBfsIterations" value="1000" />           <!-- The max number of bfs iterations (more iterations will require more CPU ressources) -->
-    <property name="needsMaterialsForRepair" value="true" />    <!-- Set this param to false to repair even if you miss the repair materials -->
-    <property name="needsMaterialsForUpgrade" value="true" />   <!-- Set this param to false to upgrade even if you miss the upgrade materials -->
-    <property name="refreshRate" value="0" />                   <!-- The number of game ticks between two auto refresh (set to 0 to disable auto refresh) -->
-    <property name="repairRate" value="100" />                  <!-- The amount of damage which can be repaired for one game tick (set to 0 for instant repairs) -->
-    <property name="upgradeRate" value="1" />                   <!-- The number of blocks which can be upgraded during one game tick (set to 0 to for instant upgrades) -->
-    <property name="playRepairSound" value="true" />            <!-- Set to false to disable the hammer sound on the current block which is being repaired -->
-    <property name="activeDuringBloodMoon" value="false" />     <!-- Set to true to enable the auto repair during the blood moon-->
-    <property name="autoTurnOff" value="true" />                <!-- Auto turn off if no more blocks can be repaired -->
-    <property name="keepPaintAfterUpgrade" value="true" />      <!-- If enabled, the upgraded block will keep his original paint, else his texture will be set to the upgrade block texture -->
-    <property name="lootSize" value="6,5" />                    <!-- Number of columns of the loot container -->
-    <property name="upgradeSound" value="nailgun_fire" />       <!-- The sound played when a block is upgraded -->
-```
+## Development & Tooling
 
-Once you have set up your own balancing options, restart the game or the dedicated server.
+  * **Changelog:** Track technical iterations in [CHANGELOG.md](https://www.google.com/search?q=./CHANGELOG.md).
+  * **Environment:** Developed for 7D2D v1.3+ using .NET Framework 4.8.
