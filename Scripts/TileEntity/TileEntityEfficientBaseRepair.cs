@@ -628,7 +628,7 @@ public class TileEntityEfficientBaseRepair : TileEntitySecureLootContainer // TO
 			if (!(world.GetTileEntity(pos) is TileEntityPoweredRangedTrap tileEntity))
 				continue;
 
-			ItemClass ammoType = RangedTrapHelper.GetFirstAllowedAmmo(tileEntity);
+			ItemClass ammoType = tileEntity.AmmoItems.FirstOrDefault();
 
 			if (ammoType == null)
 			{
@@ -731,7 +731,7 @@ public class TileEntityEfficientBaseRepair : TileEntitySecureLootContainer // TO
 			if (!(world.GetTileEntity(blockPos) is TileEntityPoweredRangedTrap tileEntity))
 				continue;
 
-			ItemClass ammoType = RangedTrapHelper.GetFirstAllowedAmmo(tileEntity);
+			ItemClass ammoType = tileEntity.AmmoItems.FirstOrDefault();
 
 			if (ammoType == null || !inventoryItems.ContainsKey(ammoType.Name))
 				continue;
